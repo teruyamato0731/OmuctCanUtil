@@ -24,7 +24,7 @@ struct CanId {
     return (id >> 1) & 0xfffu;
   }
   constexpr bool is_return() const noexcept {
-    return id;
+    return id & 1;
   }
   constexpr bool is_for_me(const uint32_t receive_id) const noexcept {
     return (receive_id == broadcast) || (receive_id == (id & 0xfff000u)) || (receive_id == id);
