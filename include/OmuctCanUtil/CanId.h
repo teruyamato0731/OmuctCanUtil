@@ -14,6 +14,7 @@ struct CanId {
   enum {
     broadcast = 0
   };
+  explicit constexpr CanId(uint32_t id) : id{id} {}
   static constexpr CanId make_can_id(const uint16_t api_id, const uint16_t individual_id, const bool is_return = false) noexcept {
     return CanId{((api_id & 0xfffu) << 13) | ((individual_id & 0xfffu) << 1) | is_return};
   }
@@ -30,10 +31,13 @@ struct CanId {
     return (receive_id == broadcast) || (receive_id == (id & 0xfff000u)) || (receive_id == id);
   }
   constexpr CanId make_return() const noexcept {
-    return {id | 1u};
+    return CanId{id | 1u};
   }
-  operator uint32_t() const noexcept {
+  constexpr uint32_t get_raw() const noexcept {
     return id;
+  }
+  constexpr void set_raw(const uint32_t id) {
+    this->id = id;
   }
   uint32_t id;
 };
