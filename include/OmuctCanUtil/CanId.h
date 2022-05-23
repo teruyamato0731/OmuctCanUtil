@@ -10,6 +10,8 @@
 
 namespace omuct_can_util {
 
+
+
 struct CanId {
   enum {
     broadcast = 0
