@@ -1,7 +1,9 @@
 {
   "name": "OmuctCanUtil",
   "version": "0.0.0",
-  "frameworks": "*",
+  "frameworks": ["arduino", "mbed"],
+  // "frameworks": "*",
+  // "platforms": ["espressif32", "ststm32", "teensy"],
   "platforms": "*",
   "headers": ["CanId.h", "CanUtil.h"],
   "repository": {
@@ -15,5 +17,22 @@
   "build": {
     "unflags": "-std=gnu++14",
     "flags": "-std=gnu++17"
-  }
+  },
+  "examples": [
+    {
+        "name": "Arduino",
+        "base": "examples/Arduino",
+        "files": [
+          "main.cpp"
+        ]
+    },
+    {
+        "name": "Mbed",
+        "base": "examples/Mbed",
+        "files": [
+          "platformio.ini",
+          "main.cpp"
+        ]
+    }
+]
 }

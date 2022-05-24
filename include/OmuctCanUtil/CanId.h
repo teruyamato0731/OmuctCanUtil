@@ -3,11 +3,6 @@
 
 #include <stdint.h>
 
-// TODO
-// read broadcast
-// send command
-// reply WhoAmI
-
 namespace omuct_can_util {
 
 struct CanId {
