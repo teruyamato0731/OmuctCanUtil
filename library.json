@@ -1,4 +1,38 @@
 {
   "name": "OmuctCanUtil",
-  "version": "0.0.0"
+  "version": "0.0.0",
+  "frameworks": ["arduino", "mbed"],
+  // "frameworks": "*",
+  // "platforms": ["espressif32", "ststm32", "teensy"],
+  "platforms": "*",
+  "headers": ["CanId.h", "CanUtil.h"],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/teruyamato0731/OmuctCanUtil"
+  },
+  "license": "MIT",
+  "authors": {
+    "name": "Yoshikawa Teru"
+  },
+  "build": {
+    "unflags": "-std=gnu++14",
+    "flags": "-std=gnu++17"
+  },
+  "examples": [
+    {
+        "name": "Arduino",
+        "base": "examples/Arduino",
+        "files": [
+          "main.cpp"
+        ]
+    },
+    {
+        "name": "Mbed",
+        "base": "examples/Mbed",
+        "files": [
+          "platformio.ini",
+          "main.cpp"
+        ]
+    }
+]
 }

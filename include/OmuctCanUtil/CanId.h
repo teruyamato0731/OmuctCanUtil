@@ -3,18 +3,15 @@
 
 #include <stdint.h>
 
-// TODO
-// read broadcast
-// send command
-// reply WhoAmI
-
 namespace omuct_can_util {
 
 struct CanId {
   enum {
     broadcast = 0
   };
+
   explicit constexpr CanId(uint32_t id) : id{id} {}
+
   static constexpr CanId make_can_id(const uint16_t api_id, const uint16_t individual_id, const bool is_return = false) noexcept {
     return CanId{((api_id & 0xfffu) << 13) | ((individual_id & 0xfffu) << 1) | is_return};
   }
