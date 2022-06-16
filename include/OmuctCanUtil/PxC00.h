@@ -3,7 +3,8 @@
 
 namespace omuct_can_util {
 
-class PxC00{
+struct PxC00 {
+  constexpr Px001() noexcept = default;
 };
 
 }  // namespace omuct_can_util

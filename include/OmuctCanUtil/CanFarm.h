@@ -3,17 +3,17 @@
 
 namespace omuct_can_util {
 
-struct ReceivePosition {};
+// struct ReceivePosition {};
 
-struct Pwm {
-  float pwm;
-  /// @note aggregate
+// struct Pwm {
+//   float pwm;
+//   /// @note aggregate
 
-  int get_int() {
-    return static_cast<int>(pwm*255)
-  }
-}
+//   int get_int() {
+//     return static_cast<int>(pwm*255)
+//   }
+// }
 
-}
+}  // namespace omuct_can_util
 
 #endif  // OCU_CAN_FARM_H_

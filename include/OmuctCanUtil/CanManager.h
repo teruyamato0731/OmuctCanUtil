@@ -8,14 +8,21 @@
 #include "CanBus.h"
 #include "CanMessage.h"
 
+#include <mbed.h>
+
 namespace omuct_can_util {
 
-template<class T, class ...Args>
+template<class ...Args>
 struct CanManager {
-  CanManager(T& can, Args&... args) : can_{can}, t_{args...} {}
+  CanManager(CanBus& can, Args&... args) : can_{can}, t_{args...} {
+    timer_.start();
+  }
 
+  // TODO先で read呼び出し出来ないように
   void task() {
-    const CanMessage msg = can_.read();
+    CanMessage msg;
+    can_.read(msg);
+    // const auto delta_period = timer_.elapsed_time();  // TODO
     task_impl<0, sizeof...(Args)>(msg);
   }
 
@@ -31,13 +38,10 @@ struct CanManager {
   //   can_.write(msg);
   // }
 
-  T& can_;
+  CanBus& can_;
   std::tuple<Args&...> t_;
+  mbed::Timer timer_;
 };
-
-// deduction guide
-template<class...Args>
-CanManager(T, Args&&...) -> CanManager<T, sizeof...(Args)>;
 
 }  // namespace omuct_can_util
 

@@ -10,26 +10,25 @@ struct CanId {
     broadcast = 0
   };
 
-  static constexpr CanId make(uint32_t id) noexcept {
+  static constexpr CanId make(const uint32_t id) noexcept {
     return CanId{id};
   }
-  constexpr CanId(const uint16_t api_id, const uint16_t individual_id, const bool is_return = false) noexcept {
-    return CanId{((api_id & 0xfffu) << 13) | ((individual_id & 0xfffu) << 1) | is_return};
-  }
+  constexpr CanId(const uint16_t api_id, const uint16_t individual_id, const bool is_return = false) noexcept
+      : id_{((api_id & 0xfffu) << 13) | ((individual_id & 0xfffu) << 1) | is_return} {}
   constexpr uint16_t get_api_id() const noexcept {
-    return (id >> 13) & 0xfffu;
+    return (id_>> 13) & 0xfffu;
   }
   constexpr uint16_t get_individual_id() const noexcept {
-    return (id >> 1) & 0xfffu;
+    return (id_>> 1) & 0xfffu;
   }
   constexpr bool is_return() const noexcept {
-    return id & 1;
+    return id_& 1;
   }
   constexpr CanId make_return() const noexcept {
-    return CanId{id | 1u};
+    return CanId{id_| 1u};
   }
   constexpr uint32_t get_raw() const noexcept {
-    return id;
+    return id_;
   }
   // constexpr void set_raw(const uint32_t id) noexcept {
   //   id_ = id;
@@ -39,7 +38,7 @@ struct CanId {
   // }
 
  protected:
-  explicit constexpr CanId(id) noexcept : id_{id} {}
+  explicit constexpr CanId(const uint32_t id) noexcept : id_{id} {}
 
  private:
   const uint32_t id_;

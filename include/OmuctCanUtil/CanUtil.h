@@ -7,10 +7,6 @@ enum State : uint8_t {
   stop = 0, start = 1
 };
 
-// ReceivePosition {}
-
-// inline reply_who_am_i() {}
-
-}
+}  // namespace omuct_can_util
 
 #endif  // OCU_CAN_UTIL_H_

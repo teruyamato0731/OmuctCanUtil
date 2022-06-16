@@ -4,7 +4,7 @@
 namespace omuct_can_util {
 
 struct Px400 {
-  void Task() {}
+  constexpr Px001() noexcept = default;
 };
 
 }  // namespace omuct_can_util

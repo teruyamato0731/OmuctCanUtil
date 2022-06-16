@@ -3,9 +3,11 @@
 
 namespace omuct_can_util {
 
+// TODO user define
 #ifdef __MBED__
-using mbed::CANMessage;
-using mbed::CANFormat;
+#include <mbed.h>
+using CanMessage = mbed::CANMessage;
+using CanFormat = ::CANFormat;
 #else  // __MBED__
 struct CANMessage {
   unsigned int   id;       // 29 bit identifier
