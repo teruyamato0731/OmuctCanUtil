@@ -12,10 +12,17 @@ struct Px002 : PlugBase {
       : id_{0x02, individual_id} {}
 
   // TODO friend & private?
-  void task(CanBus& can, const CanMessage& msg) override {
+  void task(CanBus& can, const CanMessage&) override {
     if(false) {
+      CanMessage msg{};
       can.write(msg);
     }
+  }
+
+  void send_state(CanBus& can) {
+    // TODO
+    CanMessage msg{};
+    can.write(msg);
   }
 
   void set_state(const uint8_t state) {
@@ -25,6 +32,7 @@ struct Px002 : PlugBase {
  private:
   const CanId id_;
   uint8_t state_ = 0;
+  // bool send_flg
 };
 
 }  // namespace omuct_can_util

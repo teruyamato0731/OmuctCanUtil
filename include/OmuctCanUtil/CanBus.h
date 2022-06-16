@@ -10,6 +10,8 @@ struct CanBus {
   // TODO Arduino用
   // read write
 };
+
+// or Arduino Can Adaptor
 #endif
 
 }
