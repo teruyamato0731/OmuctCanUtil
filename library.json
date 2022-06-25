@@ -1,9 +1,7 @@
 {
   "name": "OmuctCanUtil",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "frameworks": ["arduino", "mbed"],
-  // "frameworks": "*",
-  // "platforms": ["espressif32", "ststm32", "teensy"],
   "platforms": "*",
   "headers": ["CanId.h", "CanUtil.h"],
   "repository": {
@@ -34,5 +32,5 @@
           "main.cpp"
         ]
     }
-]
+  ]
 }

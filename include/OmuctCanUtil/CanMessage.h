@@ -3,12 +3,14 @@
 
 namespace omuct_can_util {
 
-// TODO user define
 #ifdef __MBED__
+
 #include <mbed.h>
 using CanMessage = mbed::CANMessage;
 using CanFormat = ::CANFormat;
-#else  // __MBED__
+
+#elif defined(ARDUINO)
+
 struct CANMessage {
   unsigned int   id;       // 29 bit identifier
   unsigned char  data[8];  // Data field
@@ -25,7 +27,8 @@ enum CANType {
   CANData   = 0,
   CANRemote = 1
 };
-#endif  // __MBED__
+
+#endif
 
 }  // namespace omuct_can_util
 

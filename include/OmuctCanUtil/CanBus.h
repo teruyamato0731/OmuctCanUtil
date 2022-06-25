@@ -4,14 +4,14 @@
 namespace omuct_can_util {
 
 #ifdef __MBED__
-using CanBus = mbed::CAN;
-#else  // __MBED__
-struct CanBus {
-  // TODO Arduino用
-  // read write
-};
 
-// or Arduino Can Adaptor
+using CanBus = mbed::CAN;
+
+#elif defined(ARDUINO)  // __MBED__
+
+#include "ArduinoCanAdaptor.h"
+using CanBus = ArduinoCanAdaptor;
+
 #endif
 
 }

@@ -8,7 +8,8 @@
 namespace omuct_can_util {
 
 struct Px001 : PlugBase {
-  constexpr Px001() noexcept = default;
+  // TODO
+  constexpr Px001(CanManager) noexcept {}
 
   void task(CanBus& can, const CanMessage& msg) override {
     if(false) {

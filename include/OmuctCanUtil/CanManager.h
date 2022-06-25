@@ -7,40 +7,39 @@
 
 #include "CanBus.h"
 #include "CanMessage.h"
-
-#include <mbed.h>
+#include "CanUtil.h"
 
 namespace omuct_can_util {
 
-template<class ...Args>
 struct CanManager {
-  CanManager(CanBus& can, Args&... args) : can_{can}, t_{args...} {
-    timer_.start();
+  CanManager(CanBus& can) : can_{can} {}
+
+  void set_callback(std::function<void(CanMessage)> f) noexcept {
+    f_ = f;
   }
 
-  // TODO先で read呼び出し出来ないように
   void task() {
-    CanMessage msg;
-    can_.read(msg);
-    // const auto delta_period = timer_.elapsed_time();  // TODO
-    task_impl<0, sizeof...(Args)>(msg);
-  }
-
-  template<int I, int N>
-  void task_impl(const CanMessage& msg) {
-    if constexpr (I < N) {
-      std::get<I>(t_).task(can_, msg);
-      task_impl<I+1, N>(msg);
+    if(CANMessage enc_msg; can_.read(enc_msg)) {
+      printf("%d\n", enc_msg.id);
+      f_(enc_msg);
+    } else {
+      printf("no msg\n");
     }
   }
 
-  // void send(const CanMessage& msg) {
-  //   can_.write(msg);
-  // }
+  void send(const CanMessage& msg) {
+    can_.write(msg);
+  }
 
+  void who_am_i(ApiId target = ApiId::broadcast) {
+    uint8_t data[] = {static_cast<uint8_t>(Command::who_am_i)};
+    CANMessage msg{static_cast<uint8_t>(target), data, size(data)};
+    can_.write(msg);
+  }
+
+ private:
   CanBus& can_;
-  std::tuple<Args&...> t_;
-  mbed::Timer timer_;
+  std::function<void(CanMessage)> f_;
 };
 
 }  // namespace omuct_can_util

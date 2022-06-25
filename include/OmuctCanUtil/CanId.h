@@ -6,10 +6,6 @@
 namespace omuct_can_util {
 
 struct CanId {
-  enum {
-    broadcast = 0
-  };
-
   static constexpr CanId make(const uint32_t id) noexcept {
     return CanId{id};
   }
@@ -37,10 +33,8 @@ struct CanId {
   //   return (receive_id == broadcast) || (receive_id == (id & 0xfff000u)) || (receive_id == id);
   // }
 
- protected:
-  explicit constexpr CanId(const uint32_t id) noexcept : id_{id} {}
-
  private:
+  explicit constexpr CanId(const uint32_t id) noexcept : id_{id} {}
   const uint32_t id_;
 };
 
