@@ -19,11 +19,8 @@ struct CanManager {
   }
 
   void task() {
-    if(CANMessage enc_msg; can_.read(enc_msg)) {
-      printf("%d\n", enc_msg.id);
-      f_(enc_msg);
-    } else {
-      printf("no msg\n");
+    if(CANMessage msg; can_.read(msg)) {
+      f_(msg);
     }
   }
 

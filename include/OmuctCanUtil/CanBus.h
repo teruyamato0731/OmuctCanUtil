@@ -9,9 +9,21 @@ using CanBus = mbed::CAN;
 
 #elif defined(ARDUINO)  // __MBED__
 
-#include "ArduinoCanAdaptor.h"
-using CanBus = ArduinoCanAdaptor;
-
+// TODO
+#include <Arduino.h>
+struct CanBus {
+  int read() {
+    return 0;
+  }
+  int write() {
+    return 0;
+  }
+  int frequency() {
+    return 0;
+  }
+};
+#else
+#error unsupported framework
 #endif
 
 }

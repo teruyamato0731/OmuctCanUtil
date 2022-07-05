@@ -12,41 +12,69 @@
 namespace omuct_can_util {
 
 struct Px002 : PlugBase {
+  // API固有コマンド
   enum class SpecifyCommand : uint8_t {
-    force_set_state = 1
+    force_set_state = 1,
   };
 
+  /// コンストラクタ
+  /// @param manager CanManager
+  /// @param individual_id 個体ID
   constexpr Px002(CanManager& manager, const uint16_t individual_id) noexcept
       : manager_{manager}, id_{0x002, individual_id} {}
 
-  void set_state(const uint8_t state) {
-    if(pos_) {
-      uint8_t data[] = {static_cast<uint8_t>(Command::call_api), static_cast<uint8_t>(SpecifyCommand::force_set_state), state};
-      CANMessage msg{pos_.value().id, data, size(data)};
-      manager_.send(msg);
-    }
+  /// setupで呼び出し
+  void setup(const uint16_t id, const State state) {
+    set_mosi_id(id);
+    set_state(state);
   }
 
-  void set_mosi_id(const uint16_t id) {
-    const MosiPosition pos = {id};
-    pos_ = pos;
+  // start stop を切り替え
+  void set_state(const State state) {
+    state_ = state;
+  }
 
-    uint8_t data[] = {static_cast<uint8_t>(Command::set_mosi_id), id >> 8u, id & 0xffu};
-    CANMessage msg{id_.get_raw(), data, size(data)};
+  // master out slave in の id を設定
+  void set_mosi_id(const uint16_t id) {
+    set_mosi_id(MosiPosition{id});
+  }
+
+  void set_mosi_id(const MosiPosition pos) {
+    pos_ = pos;
+    uint8_t* data = reinterpret_cast<uint8_t*>(&(pos_.value()));
+    // uint8_t data[] = {static_cast<uint8_t>(Command::set_mosi_id), static_cast<uint8_t>(id >> 8u), static_cast<uint8_t>(id & 0xffu)};
+    CANMessage msg{id_.get_raw(), data, sizeof(MosiPosition), CANData, CANExtended};
+    // CANMessage msg{id_.get_raw(), data, size(data)};
     manager_.send(msg);
   }
 
+  // hard reset
   void hard_reset() {
     uint8_t data[] = {static_cast<uint8_t>(Command::hard_reset)};
-    CANMessage msg{id_.get_raw(), data, size(data)};
+    CANMessage msg{id_.get_raw(), data, size(data), CANData, CANExtended};
     manager_.send(msg);
+  }
+
+  // ソレノイドを出力
+  void sol_write(const uint8_t sol_flg) {
+    if(pos_) {
+      sol_flg_ = sol_flg;
+      uint8_t data[] = {
+        static_cast<uint8_t>(Command::call_api),
+        static_cast<uint8_t>(SpecifyCommand::force_set_state),
+        sol_flg_
+      };
+      CANMessage msg{pos_->id, data, size(data), CANData, CANExtended};
+      manager_.send(msg);
+    }
   }
 
  private:
   CanManager& manager_;
   const CanId id_;
-  std::optional<MosiPosition> pos_;
-  uint8_t sol_state_ = 0;
+  std::optional<MosiPosition> pos_ = std::nullopt;
+  State state_ = State::stop;
+  uint8_t sol_flg_ = 0;
 };
 
 }  // namespace omuct_can_util
