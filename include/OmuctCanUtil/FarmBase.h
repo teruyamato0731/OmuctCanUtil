@@ -7,7 +7,7 @@ struct FarmBase {
   virtual void who_am_i() = 0;
   virtual void hard_reset() = 0;  // HAL_NVIC_SystemReset
   virtual void set_state(const State state) {
-    state_ = state;
+    // state_ = state;
   }
 
   // virtual void stop() {
@@ -22,7 +22,7 @@ struct FarmBase {
   // virtual void call_api_specify_command() {};
 
  protected:
-  State state_ = State::stop;
+  // State state_ = State::stop;
 };
 
 // struct Pwm {

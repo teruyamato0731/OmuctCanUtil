@@ -14,7 +14,7 @@
 // // sol
 // Px002 px002{can_manager, 0x01};
 
-int main() {
+int test() {
   // printf("setup\n");
   while(1) {
     // printf("hoge\n");

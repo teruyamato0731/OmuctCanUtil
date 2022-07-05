@@ -27,7 +27,8 @@ enum CANType {
   CANData   = 0,
   CANRemote = 1
 };
-
+#else
+#error unsupported framework
 #endif
 
 }  // namespace omuct_can_util
