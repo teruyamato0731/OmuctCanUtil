@@ -1,15 +1,34 @@
 #include <mbed.h>
-#include <CanManager.h>
-#include <plugin_sol_002.h>
+#include <OmuctCanUtil/CanManager.h>
+#include <OmuctCanUtil/Px002.h>
 
-CAN can{PA_11, PA_12, (int)1e6};
-CanManager<CAN>{can};
+using namespace omuct_can_util;
+
+// Serial
+BufferedSerial pc{USBTX, USBRX, 115200};
+
+// Can
+CanBus can{PB_12, PB_13, (int)1e6};
+CanManager can_manager{can};
+
+// sol
+Px002 px002{can_manager, 0x01};
 
 int main() {
-  CanBus can{};
-  Px001 px001{};
-  CanManager hoge {can, px001};
+  printf("setup\n");
+
+  can_manager.set_callback([](const CanMessage& msg) {
+    printf("hoge\t%d\n", msg.id);
+  });
+
+  can_manager.who_am_i();
+  px002.setup(1, State::start);
+
   while(1) {
-    hoge.task();
+    can_manager.task();
+    px002.sol_write(0b1010);
+    printf("send\n");
+
+    ThisThread::sleep_for(500ms);
   }
 }
