@@ -1,6 +1,15 @@
 # OmuctCanUtil
 大阪公立大学工業高等専門学校ろぼっと倶楽部のCANライブラリ
 
+# 対応フレームワーク
+- Arduino(予定)
+- Mbed
+
+# overview
+CanManagerクラスに全部投げるといい感じに通信される！
+(コールバック関数は必要)
+使うAPIに応じてプラグイン(ヘッダ)をinclude
+
 # dir
 ```bash
 ├── LICENSE

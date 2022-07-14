@@ -10,14 +10,6 @@ using CanMessage = mbed::CANMessage;
 using CanFormat = ::CANFormat;
 
 #elif defined(ARDUINO)
-
-struct CANMessage {
-  unsigned int   id;       // 29 bit identifier
-  unsigned char  data[8];  // Data field
-  unsigned char  len;      // Length of data field in bytes
-  CANFormat      format;   // Format ::CANFormat
-  CANType        type;     // Type ::CANType
-};
 enum CANFormat {
   CANStandard = 0,
   CANExtended = 1,
@@ -26,6 +18,13 @@ enum CANFormat {
 enum CANType {
   CANData   = 0,
   CANRemote = 1
+};
+struct CanMessage {
+  unsigned int   id;       // 29 bit identifier
+  unsigned char  data[8];  // Data field
+  unsigned char  len;      // Length of data field in bytes
+  CANFormat      format;   // Format ::CANFormat
+  CANType        type;     // Type ::CANType
 };
 #else
 #error unsupported framework

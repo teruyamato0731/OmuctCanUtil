@@ -7,18 +7,18 @@
 
 namespace omuct_can_util {
 
-struct Px001 : PlugBase {
-  // TODO
-  constexpr Px001(CanManager) noexcept {}
+// struct Px001 : PlugBase {
+//   // TODO
+//   constexpr Px001(CanManager) noexcept {}
 
-  void task(CanBus& can, const CanMessage& msg) override {
-    if(false) {
-      can.write(msg);
-    }
-  }
+//   void task(CanBus& can, const CanMessage& msg) override {
+//     if(false) {
+//       can.write(msg);
+//     }
+//   }
 
-  const CanId can_id = {0x001, 0};
-};
+//   const CanId can_id = {0x001, 0};
+// };
 
 }  // namespace omuct_can_util
 
