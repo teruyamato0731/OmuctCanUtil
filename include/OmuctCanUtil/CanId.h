@@ -29,13 +29,30 @@ struct CanId {
   // constexpr void set_raw(const uint32_t id) noexcept {
   //   id_ = id;
   // }
-  // constexpr bool is_for_me(const uint32_t receive_id) const noexcept {
-  //   return (receive_id == broadcast) || (receive_id == (id & 0xfff000u)) || (receive_id == id);
-  // }
+  constexpr bool include(const uint32_t receive_id) const noexcept {
+    return include(CanId::make(receive_id));
+  }
+  constexpr bool include(const CanId receive_id) const noexcept {
+    if(receive_id.is_return()) return false;
+
+    return (receive_id.get_api_id() == ApiId::broadcast || receive_id.get_api_id() == id_.get_api_id()) &&
+           (receive_id.get_individual_id() == id_.get_individual_id() || receive_id.get_individual_id() == ApiId::broadcast);
+  }
 
  private:
   explicit constexpr CanId(const uint32_t id) noexcept : id_{id} {}
   const uint32_t id_;
+};
+
+struct ShortCanId {
+  auto data() -> uint8_t(&)[2] {
+    return reinterpret_cast<uint8_t(&)[2]>(id);
+  }
+  auto id() const noexcept {
+    return id;
+  }
+ private:
+  uint16_t id;
 };
 
 }  // namespace omuct_can_util
