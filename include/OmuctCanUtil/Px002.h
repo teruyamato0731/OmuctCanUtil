@@ -61,16 +61,16 @@ struct Px002 : PlugBase {
 
   void set_mosi_id(const MosiPosition pos) {
     pos_ = pos;
-    uint8_t* data = reinterpret_cast<uint8_t*>(&(pos_.value()));
-    // uint8_t data[] = {static_cast<uint8_t>(Command::set_mosi_id), static_cast<uint8_t>(id >> 8u), static_cast<uint8_t>(id & 0xffu)};
-    CANMessage msg{id_.get_raw(), data, sizeof(decltype(pos)), CANData, CANExtended};
-    // CANMessage msg{id_.get_raw(), data, size(data)};
+    // uint8_t* data = reinterpret_cast<uint8_t*>(&(pos_.value()));
+    // CANMessage msg{id_.get_raw(), data, sizeof(decltype(pos)), CANData, CANExtended};
+    uint8_t data[] = {static_cast<uint8_t>(Command::set_mosi_id), static_cast<uint8_t>(id >> 8u), static_cast<uint8_t>(id & 0xffu)};
+    CANMessage msg{id_.get_raw(), data, size(data)};
     manager_.send(msg);
   }
 
   // hard reset
   void hard_reset() {
-    uint8_t data[] = {static_cast<uint8_t>(Command::hard_reset)};
+    uint8_t data[] = {Command::hard_reset};
     CANMessage msg{id_.get_raw(), data, size(data), CANData, CANExtended};
     manager_.send(msg);
   }

@@ -39,13 +39,13 @@ struct ApiId {
   operator enum Type() const { return _type; }
 };
 
-struct MosiPosition {
-  uint16_t id;
-};
+// struct MosiPosition {
+//   uint16_t id;
+// };
 
-struct MisoPosition {
-  uint16_t id;
-};
+// struct MisoPosition {
+//   uint16_t id;
+// };
 
 // TODO Position どっちも統合 Misoじゃなくてreceive?
 
