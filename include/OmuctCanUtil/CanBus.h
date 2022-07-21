@@ -9,18 +9,38 @@ using CanBus = mbed::CAN;
 
 #elif defined(ARDUINO)  // __MBED__
 
-// TODO
 #include <Arduino.h>
+#include <CAN.h>
+
+#include "CanMessage.h"
+  
 struct CanBus {
-  int read() {
+  CanBus(const int rx, const int tx, const long hz){
+    CAN.begin(hz);
+    CAN.setPins(rx,tx);
+  }
+  int read(CanMessage& msg) {
+    if(CAN.available()){
+      for(int i = 0; i < CAN.packetDlc(); ++i){
+        msg.data[i] = static_cast<uint8_t>(CAN.read());
+      }
+    }
     return 0;
   }
-  int write() {
+  int write(CanMessage& msg) {
+    if(msg.format == CANStandard){
+      CAN.beginPacket(msg.id,msg.type);
+    }
+    else if(msg.format  == CANExtended){
+      CAN.beginExtendedPacket(msg.id,msg.type);
+    }
+    CAN.write(msg.data, msg.len);
+    CAN.endPacket();
     return 0;
   }
-  int frequency() {
-    return 0;
-  }
+  // int frequency() {
+  //   return 0;
+  // }
 };
 #else
 #error unsupported framework
