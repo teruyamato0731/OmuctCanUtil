@@ -19,6 +19,7 @@ struct Command {
     set_state = 2,
     set_mosi_id = 3,
     set_miso_id = 4,
+    get_state = 5,
     call_api = 255,
   };
   enum Type _type;
@@ -38,24 +39,6 @@ struct ApiId {
   ApiId(const Type v) : _type(v) {}
   operator enum Type() const { return _type; }
 };
-
-// struct MosiPosition {
-//   uint16_t id;
-// };
-
-// struct MisoPosition {
-//   uint16_t id;
-// };
-
-// TODO Position どっちも統合 Misoじゃなくてreceive?
-
-// struct Pwm {
-//   float pwm;
-//   /// @note aggregate
-//   int get_int() {
-//     return static_cast<int>(pwm*255)
-//   }
-// }
 
 }  // namespace omuct_can_util
 

@@ -17,14 +17,6 @@
 
 namespace omuct_can_util {
 
-// namespace detail {
-// struct ForceSolWrite {
-//   Command = static_cast<uint8_t>(Command::call_api);
-//   SpecifyCommand = static_cast<uint8_t>(SpecifyCommand::force_set_state);
-//   uint8_t sol_flg;
-// };
-// }
-
 struct Px002 : PlugBase {
   // API固有コマンド
   struct SpecifyCommand {
@@ -51,35 +43,36 @@ struct Px002 : PlugBase {
   // start stop を切り替え
   void set_state(const State state) {
     uint8_t data[] = {state};
-    CANMessage msg{id_.get_raw(), data, size(data), CANData, CANExtended};
+    CANMessage msg{id_.get_id(), data, size(data), CANData, CANExtended};
+    manager_.send(msg);
   }
 
   // master out slave in の id を設定
   void set_mosi_id(const uint16_t id) {
-    set_mosi_id(MosiPosition{id});
+    set_mosi_id(CanId<CANStandard>{id});
   }
 
-  void set_mosi_id(const MosiPosition pos) {
-    pos_ = pos;
-    // uint8_t* data = reinterpret_cast<uint8_t*>(&(pos_.value()));
-    // CANMessage msg{id_.get_raw(), data, sizeof(decltype(pos)), CANData, CANExtended};
-    uint8_t data[] = {static_cast<uint8_t>(Command::set_mosi_id), static_cast<uint8_t>(id >> 8u), static_cast<uint8_t>(id & 0xffu)};
-    CANMessage msg{id_.get_raw(), data, size(data)};
+  void set_mosi_id(const CanId<CANStandard> receive_id) {
+    receive_id_ = receive_id;
+    // uint8_t* data = reinterpret_cast<uint8_t*>(&(receive_id_.value()));
+    // CANMessage msg{id_.get_id(), data, sizeof(decltype(receive_id)), CANData, CANExtended};
+    uint8_t data[] = {Command::set_mosi_id, receive_id[0], receive_id[1]};
+    CANMessage msg{id_.get_id(), data, size(data)};
     manager_.send(msg);
   }
 
   // hard reset
   void hard_reset() {
     uint8_t data[] = {Command::hard_reset};
-    CANMessage msg{id_.get_raw(), data, size(data), CANData, CANExtended};
+    CANMessage msg{id_.get_id(), data, size(data), CANData, CANExtended};
     manager_.send(msg);
   }
 
   // ソレノイドを出力
   void sol_write(const uint8_t sol_flg) {
-    if(pos_) {
+    if(receive_id_) {
       sol_flg_ = sol_flg;
-      CANMessage msg{pos_->id, &sol_flg_, 1};
+      CANMessage msg{receive_id_->get_id(), &sol_flg_, 1};
       manager_.send(msg);
     }
   }
@@ -92,15 +85,20 @@ struct Px002 : PlugBase {
       SpecifyCommand::force_sol_write,
       sol_flg_
     };
-    CANMessage msg{id_.get_raw(), data, size(data), CANData, CANExtended};
+    CANMessage msg{id_.get_id(), data, size(data), CANData, CANExtended};
+    manager_.send(msg);
+  }
+
+  template<CANFormat E, std::size_t N>
+  void send_data(const CanId<E> id, uint8_t(&data)[N]) {
+    CANMessage msg{id.get_id(), data, N, CANData, E};
     manager_.send(msg);
   }
 
  private:
   CanManager& manager_;
-  const CanId id_;
-  std::optional<MosiPosition> pos_ = std::nullopt;
-  // State state_ = State::stop;
+  const CanId<CANExtended> id_;
+  std::optional<CanId<CANStandard> > receive_id_ = std::nullopt;
   uint8_t sol_flg_ = 0;
 };
 

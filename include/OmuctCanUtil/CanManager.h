@@ -13,7 +13,7 @@
 namespace omuct_can_util {
 
 struct CanManager {
-  CanManager(CanBus& can) : can_{can} {}
+  explicit CanManager(CanBus& can) : can_{can} {}
 
   void set_callback(const std::function<void(CanMessage)> f) noexcept {
     f_ = f;
@@ -30,30 +30,30 @@ struct CanManager {
     can_.write(msg);
   }
 
-  void set_state(const State state, const CanId& id) {
+  void set_state(const State state, const CanId<CANExtended>& id) {
     uint8_t data[] = {Command::set_state, state};
-    CanMessage msg{id.get_raw(), data, size(data)};
+    CanMessage msg{id.get_id(), data, size(data)};
     can_.write(msg);
   }
-  void who_am_i(const CanId& id) {
+  void who_am_i(const CanId<CANExtended>& id) {
     uint8_t data[] = {Command::who_am_i};
-    CanMessage msg{id.get_raw(), data, size(data)};
+    CanMessage msg{id.get_id(), data, size(data)};
     can_.write(msg);
   }
-  void hard_reset(const CanId& id) {
+  void hard_reset(const CanId<CANExtended>& id) {
     uint8_t data[] = {Command::hard_reset};
-    CanMessage msg{id.get_raw(), data, size(data)};
+    CanMessage msg{id.get_id(), data, size(data)};
     can_.write(msg);
   }
 
   void set_state(const State state, const ApiId target = ApiId::broadcast) {
-    set_state(state, CanId{target, ApiId::broadcast});
+    set_state(state, CanId<CANExtended>{target, ApiId::broadcast});
   }
   void who_am_i(const ApiId target = ApiId::broadcast) {
-    who_am_i(CanId{target, ApiId::broadcast});
+    who_am_i(CanId<CANExtended>{target, ApiId::broadcast});
   }
   void hard_reset(const ApiId target = ApiId::broadcast) {
-    hard_reset(CanId{target, ApiId::broadcast});
+    hard_reset(CanId<CANExtended>{target, ApiId::broadcast});
   }
 
  private:

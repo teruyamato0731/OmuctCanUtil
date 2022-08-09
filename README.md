@@ -44,3 +44,13 @@ The source code is licensed MIT.
 
 Copyright (c) 2022 Yoshikawa Teru
 This software is released under the MIT License, see LICENSE.
+
+# 開発の進捗
+- [ ] CanManager
+    - [x] 各種共通コマンドが送信できる。
+    - [x] callbackを設定し呼び出せる。
+- [ ] PlugBase
+- [ ] FirmBase
+- [ ] Px002
+    - [x] 各種共通コマンドが送信できる。
+- [ ] Fx002
