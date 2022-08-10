@@ -7,11 +7,21 @@
 namespace omuct_can_util {
 
 struct PlugBase {
-  virtual void hard_reset() = 0;
-  virtual void set_state(const State state) = 0;
-  // virtual void set_recieve_id(const uint16_t id, const uint8_t byte) {};
-  // virtual void set_send_id(const uint16_t id, const uint8_t byte) {};
-  // virtual void call_api_specify_command() {};
+  constexpr PlugBase(CanManager& manager, const CanId<CANExtended> id) noexcept : manager_{manager}, id_{id} {};
+
+  // hard reset
+  void hard_reset() {
+    manager_.send_data(id_, {Command::hard_reset});
+  }
+
+  // start stop を切り替え
+  void set_state(const State state) {
+    manager_.send_data(id_, {state});
+  }
+
+ protected:
+  CanManager& manager_;
+  const CanId<CANExtended> id_;
 };
 
 }  // namespace omuct_can_util

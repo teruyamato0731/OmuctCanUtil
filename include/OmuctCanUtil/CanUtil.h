@@ -1,11 +1,15 @@
 #ifndef OCU_CAN_UTIL_H_
 #define OCU_CAN_UTIL_H_
 
+#include <cstdint>
+
 namespace omuct_can_util {
 
+// 動作状態
 struct State {
   enum Type : uint8_t {
-    stop = 0, start = 1
+    stop = 0,
+    start = 1,
   };
   enum Type _type;
   State(const Type v) : _type(v) {}
@@ -37,6 +41,16 @@ struct ApiId {
   };
   enum Type _type;
   ApiId(const Type v) : _type(v) {}
+  operator enum Type() const { return _type; }
+};
+
+// API固有コマンド
+struct SpecifyCommand_002 {
+  enum Type : uint8_t {
+    force_sol_write = 1,
+  };
+  enum Type _type;
+  SpecifyCommand_002(const Type v) : _type(v) {}
   operator enum Type() const { return _type; }
 };
 

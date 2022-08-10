@@ -50,7 +50,9 @@ This software is released under the MIT License, see LICENSE.
     - [x] 各種共通コマンドが送信できる。
     - [x] callbackを設定し呼び出せる。
 - [ ] PlugBase
+    - 
 - [ ] FirmBase
 - [ ] Px002
     - [x] 各種共通コマンドが送信できる。
+    - [ ] send_dataに移行
 - [ ] Fx002

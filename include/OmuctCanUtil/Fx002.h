@@ -1,24 +1,18 @@
 #ifndef FARM002_H_
 #define FARM002_H_
 
-#include <array>
-#include <optional>
-#include <OmuctCanUtil/FirmBase.h>
 #include <mbed.h>
 
-struct Fx002 : FirmBase {
-  struct SpecifyCommand {
-    enum Type : uint8_t {
-      force_sol_write = 1,
-    };
-    enum Type _type;
-    State(const Type v) : _type(v) {}
-    operator enum Type() const { return _type; }
-  };
+#include <array>
+#include <optional>
 
-  constexpr uint16_t api_id = 0x002;
+#include "OmuctCanUtil/CanUtil.h"
+#include "OmuctCanUtil/FirmBase.h"
+
+struct Fx002 : FirmBase {
   template<class... Args>
-  Fx002(const CanBus& can, const uint16_t individual_id, const Args... pins) : can_{can}, id_{api_id, individual_id} ,sols_{pins}... {
+  Fx002(const CanBus& can, const uint16_t individual_id, const Args... pins)
+      : can_{can}, id_{0x002, individual_id}, sols_{pins}... {
     static_assert(sizeof...(Args) == 8);
   }
 
@@ -37,16 +31,16 @@ struct Fx002 : FirmBase {
   }
 
   void call_api(const uint8_t (&data)[8]) {
-    switch (data[1]) {
-      case 1:  // force digital out
+    switch(data[1]) {
+      case SpecifyCommand_002::force_sol_write:
         sol_write(data[2]);
         break;
     }
   }
 
   void call_command(const uint8_t (&data)[8]) {
-    switch (data[0]) {
-      case 1:  // Who am I
+    switch(data[0]) {
+      case Command::who_am_i:
         who_am_I(data[2]);
         break;
     }
