@@ -37,7 +37,7 @@ struct Px002 : PlugBase {
 
   void set_mosi_id(const CanId<CANStandard> receive_id) {
     receive_id_ = receive_id;
-    manager_.send_data(id_, {Command::set_mosi_id, receive_id[0], receive_id[1]});
+    manager_.send_data(id_, {Command::set_mosi_id, receive_id.upper(), receive_id.lower()});
   }
 
   // ソレノイドを出力

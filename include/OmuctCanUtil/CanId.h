@@ -56,17 +56,25 @@ struct CanId<CANExtended> {
   const uint32_t id_;
 };
 
+/// リトルエンディアンを使用すること
 template<>
 struct CanId<CANStandard> {
+  explicit constexpr CanId(const uint16_t id) : id_{id} {}
+  explicit constexpr CanId(const uint8_t* data) : id_{static_cast<uint16_t>(data[1] << 8u | data[0])} {}
   constexpr auto get_id() const noexcept {
     return id_;
   }
   constexpr uint8_t operator[](const std::size_t n) const noexcept {
     return reinterpret_cast<const uint8_t(&)[2]>(id_)[n];
   }
+  constexpr uint8_t upper() const {
+    return operator[](0);
+  }
+  constexpr uint8_t lower() const {
+    return operator[](1);
+  }
 
-  /// @note aggregate initialization
-  // explicit constexpr CanId(const uint16_t id) : id_{id} {}
+ private:
   uint16_t id_;
 };
 
