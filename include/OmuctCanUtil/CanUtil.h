@@ -5,6 +5,22 @@
 
 namespace omuct_can_util {
 
+template<std::size_t N>
+uint64_t parse_imple(const uint8_t* const data) {
+  if constexpr(N) {
+    return static_cast<uint64_t>(data[N]) << 8u * N | parse_imple<N - 1>(data);
+  } else {
+    return data[N];
+  }
+}
+// bin を T 型に変換 (Tはuint64_t以下のサイズであること)
+template<class T>
+T parse(const uint8_t* const data) {
+  static_assert(sizeof(T) <= sizeof(uint64_t), "The parse function does not support types larger than type uint64_t.");
+  auto t = parse_imple<sizeof(T) - 1>(data);
+  return *reinterpret_cast<T*>(&t);
+}
+
 // 動作状態
 struct State {
   enum Type : uint8_t {
@@ -53,6 +69,21 @@ struct SpecifyCommand_002 {
   SpecifyCommand_002(const Type v) : _type(v) {}
   operator enum Type() const { return _type; }
 };
+struct SpecifyCommand_400 {
+  enum Type : uint8_t {
+    force_write = 1,
+    set_config = 2,
+  };
+  enum Type _type;
+  SpecifyCommand_400(const Type v) : _type(v) {}
+  operator enum Type() const { return _type; }
+};
+struct __attribute__((packed)) ServoPulseConfig {
+  uint16_t min_pulse_us;
+  uint16_t max_pulse_us;
+  uint16_t one_cycle_us;
+};
+
 
 }  // namespace omuct_can_util
 

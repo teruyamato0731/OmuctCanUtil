@@ -10,11 +10,11 @@
 #include "OmuctCanUtil/FirmBase.h"
 
 struct Fx002 final : FirmBase {
-  Fx002(CanManager& manager, const uint16_t individual_id, const PinName (&pins)[6])
-      : Fx002{manager, individual_id, pins, std::make_index_sequence<6>{}} {}
+  Fx002(CAN& can, const uint16_t individual_id, const PinName (&pins)[6])
+      : Fx002{can, individual_id, pins, std::make_index_sequence<6>{}} {}
   template<std::size_t... I>
-  Fx002(CanManager& manager, const uint16_t individual_id, const PinName (&pins)[6], std::index_sequence<I...>)
-      : FirmBase{manager, {0x002, individual_id}}, sols_{pins[I]...} {}
+  Fx002(CAN& can, const uint16_t individual_id, const PinName (&pins)[6], std::index_sequence<I...>)
+      : FirmBase{can, {0x002, individual_id}}, sols_{pins[I]...} {}
 
   void sol_write(const uint8_t state) {
     for(uint8_t i = 0; i < 8; ++i) {
@@ -37,7 +37,7 @@ struct Fx002 final : FirmBase {
   }
 
   void set_mosi_id(const uint8_t (&data)[8]) override {
-    mosi_ = CanId{data};
+    mosi_ = CanId{&data[1]};
   }
 
  private:

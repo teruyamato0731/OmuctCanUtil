@@ -46,13 +46,21 @@ Copyright (c) 2022 Yoshikawa Teru
 This software is released under the MIT License, see LICENSE.
 
 # 開発の進捗
-- [ ] CanManager
+- [x] CanManager
     - [x] 各種共通コマンドが送信できる。
     - [x] callbackを設定し呼び出せる。
-- [ ] PlugBase
-    - 
-- [ ] FirmBase
+- [x] PlugBase
+- [x] FirmBase
 - [ ] Px002
     - [x] 各種共通コマンドが送信できる。
-    - [ ] send_dataに移行
+    - [x] send_dataに移行
+    - [ ] テスト
 - [ ] Fx002
+    - [ ] テスト
+- [ ] Px400
+    - [ ] テスト
+- [ ] Fx400
+    - [ ] テスト
+
+TODO get_state的なの欲しくない？
+receive id や state, config などの値を返信

@@ -17,6 +17,7 @@ AlwaysBreakTemplateDeclarations: Yes
 BinPackArguments: true
 BinPackParameters: true
 BitFieldColonSpacing: Both
+BreakBeforeBraces: Custom
 BreakConstructorInitializers: BeforeComma
 ColumnLimit: 120
 CompactNamespaces: false
@@ -33,8 +34,17 @@ KeepEmptyLinesAtTheStartOfBlocks: false
 Language: Cpp
 MaxEmptyLinesToKeep: 2
 NamespaceIndentation: None
+PenaltyBreakAssignment: 10
+PenaltyBreakBeforeFirstCallParameter: 30
+PenaltyBreakComment: 10
+PenaltyBreakFirstLessLess: 0
+PenaltyBreakString: 10
+PenaltyExcessCharacter: 20
+PenaltyIndentedWhitespace: 1
+PenaltyReturnTypeOnItsOwnLine: 5
 PointerAlignment: Left
 ReferenceAlignment: Left
+ReflowComments: false
 SortIncludes: CaseSensitive
 SpaceAfterCStyleCast: false
 SpaceAfterLogicalNot: false

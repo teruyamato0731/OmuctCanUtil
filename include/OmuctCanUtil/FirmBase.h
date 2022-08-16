@@ -1,14 +1,14 @@
 #ifndef OCU_CAN_FARM_H_
 #define OCU_CAN_FARM_H_
 
-#include "CanManager.h"
 #include "CanMessage.h"
 #include "CanUtil.h"
 
 namespace omuct_can_util {
 
+// 仮想関数じゃなくてCRTPしたい！！！
 struct FirmBase {
-  FirmBase(CanManager& manager, const CanId<CANExtended> id) noexcept : manager_{manager}, id_{id} {}
+  FirmBase(CAN& can, const CanId<CANExtended> id) noexcept : manager_{manager}, id_{id} {}
   virtual ~FirmBase() = default;
   virtual void set_mosi_id(const uint8_t(data&)[8]) {}
   virtual void set_miso_id(const uint8_t(data&)[8]) {}
@@ -51,8 +51,8 @@ struct FirmBase {
   }
 
   void who_am_i() {
-    CANMessage msg{id_.make_return().get_id(), CANExtended};
-    manager_.send(msg);
+    CanMessage msg{id_.make_return().get_id(), CANExtended};
+    can.send(msg);
   };
 
   void hard_reset() {
@@ -68,7 +68,7 @@ struct FirmBase {
   }
 
  protected:
-  CanManager& manager_;
+  CAN& can;
   const CanId<CANExtended> id_;
   State state_ = State::stop;
 };

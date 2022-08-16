@@ -32,8 +32,18 @@ struct CanManager {
 
   template<CANFormat E, std::size_t N>
   void send_data(const CanId<E> id, const uint8_t (&data)[N]) {
-    CANMessage msg{id.get_id(), data, N, CANData, E};
+    CanMessage msg{id.get_id(), data, N, CANData, E};
     send(msg);
+  }
+  template<CANFormat E, std::size_t N, std::size_t O, std::size_t... I, std::size_t... J>
+  void send_data(const CanId<E> id, const uint8_t (&data)[N], const uint8_t (&data2)[O], std::index_sequence<I...>,
+                 std::index_sequence<J...>) {
+    send_data(id, {data[I]..., data2[J]...});
+  }
+  template<CANFormat E, std::size_t N, class T>
+  void send_data(const CanId<E> id, const uint8_t (&data)[N], const T& t) {
+    send_data(id, data, reinterpret_cast<const uint8_t(&)[sizeof(T)]>(t), std::make_index_sequence<N>(),
+              std::make_index_sequence<sizeof(T)>());
   }
 
   void set_state(const State state, const CanId<CANExtended>& id) {

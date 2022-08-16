@@ -7,10 +7,6 @@
 
 namespace omuct_can_util {
 
-// TODO
-// send_dataを定義?
-// managerをprivate?
-// get_id
 struct PlugBase {
   constexpr PlugBase(CanManager& manager, const CanId<CANExtended> id) noexcept : manager_{manager}, id_{id} {};
 
