@@ -37,17 +37,17 @@ struct Px400 final : PlugBase {
   }
   void set_mosi_id(const CanId<CANStandard> receive_id) {
     receive_id_ = receive_id;
-    manager_.send_data(id_, {Command::set_mosi_id}, receive_id.get_id());
+    manager_.send_data(id_, Command::set_mosi_id, receive_id.get_id());
   }
 
   void set_config(const ServoPulseConfig& config) {
-    manager_.send_data(id_, {Command::call_api, SpecifyCommand::set_up}, config);
+    manager_.send_data(id_, Command::call_api, SpecifyCommand::set_up, config);
   }
 
   // サーボを出力
   void servo_write(const float duty) {
     if(receive_id_) {
-      manager_.send_data(receive_id_.value(), {Command::call_api, SpecifyCommand::force_set_state}, duty);
+      manager_.send_data(receive_id_.value(), Command::call_api, SpecifyCommand::force_set_state, duty);
     }
   }
 

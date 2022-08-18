@@ -23,7 +23,7 @@ struct Fx002 final : FirmBase {
   }
 
   void on_receive(const CanMessage& msg) override {
-    if(msg.format == CANStandard && state_ == State::start && mosi_ && msg.id == mosi_->get_id()) {
+    if(msg.format == CANStandard && state_ == State::start && receive_id_ && msg.id == receive_id_->get_id()) {
       sol_write(msg.data[0]);
     }
   }
@@ -37,12 +37,12 @@ struct Fx002 final : FirmBase {
   }
 
   void set_mosi_id(const uint8_t (&data)[8]) override {
-    mosi_ = CanId{&data[1]};
+    receive_id_ = CanId{&data[1]};
   }
 
  private:
   std::array<mbed::DigitalWrite, 8> sols_;
-  std::optional<ShortCanId> mosi_ = std::nullopt;
+  std::optional<CanId<CANStandard>> receive_id_ = std::nullopt;
 };
 
 #endif  // FARM002_H_

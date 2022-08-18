@@ -5,20 +5,20 @@
 
 namespace omuct_can_util {
 
-template<std::size_t N>
-uint64_t parse_imple(const uint8_t* const data) {
-  if constexpr(N) {
-    return static_cast<uint64_t>(data[N]) << 8u * N | parse_imple<N - 1>(data);
-  } else {
-    return data[N];
-  }
-}
-// bin を T 型に変換 (Tはuint64_t以下のサイズであること)
+/// @brief uint8_t*data を T型オブジェクトに変換 (T は standard layout であること)
 template<class T>
 T parse(const uint8_t* const data) {
-  static_assert(sizeof(T) <= sizeof(uint64_t), "The parse function does not support types larger than type uint64_t.");
-  auto t = parse_imple<sizeof(T) - 1>(data);
-  return *reinterpret_cast<T*>(&t);
+  T* tp;
+  memcpy(tp, data, sizeof(T));
+  return *tp;
+}
+
+template<class Head, class... Args>
+void make_data(uint8_t* data, const Head& head, const Args&... args) {
+  std::memcpy(data, reinterpret_cast<const uint8_t*>(&head), sizeof(Head));
+  if constexpr(sizeof...(Args)) {
+    make_data(data + sizeof(Head), args...);
+  }
 }
 
 // 動作状態
@@ -39,7 +39,6 @@ struct Command {
     set_state = 2,
     set_mosi_id = 3,
     set_miso_id = 4,
-    get_state = 5,
     call_api = 255,
   };
   enum Type _type;

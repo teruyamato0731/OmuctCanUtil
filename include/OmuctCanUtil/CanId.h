@@ -11,12 +11,14 @@ namespace omuct_can_util {
 template<CANFormat E>
 struct CanId;
 
+/// @note standard layout であることを規定
 template<>
 struct CanId<CANExtended> {
   // コンストラクタ
   explicit constexpr CanId(const uint32_t id) noexcept : id_{id} {}
   constexpr CanId(const uint16_t api_id, const uint16_t individual_id, const bool is_return = false) noexcept
       : id_{((api_id & 0xfffu) << 13) | ((individual_id & 0xfffu) << 1) | is_return} {}
+  // コピームーブ可
   constexpr CanId(const CanId& can_id) noexcept = default;
   constexpr CanId(CanId&& can_id) noexcept = default;
 
@@ -38,9 +40,6 @@ struct CanId<CANExtended> {
   constexpr CanId make_return() const noexcept {
     return CanId{id_ | 1u};
   }
-  // constexpr void set_raw(const uint32_t id) noexcept {
-  //   id_ = id;
-  // }
   constexpr bool is_target(const uint32_t receive_id) const noexcept {
     return is_target(CanId{receive_id});
   }
@@ -57,24 +56,14 @@ struct CanId<CANExtended> {
 };
 
 /// リトルエンディアンを使用すること
+/// @note standard layout であることを規定
 template<>
 struct CanId<CANStandard> {
   explicit constexpr CanId(const uint16_t id) : id_{id} {}
   explicit constexpr CanId(const uint8_t* const data) : id_{parse<uint16_t>(data)} {}
-  // explicit constexpr CanId(const uint8_t* const data) : id_{static_cast<uint16_t>(data[1] << 8u | data[0])} {}
   constexpr uint16_t get_id() const noexcept {
     return id_;
   }
-  constexpr uint8_t operator[](const std::size_t n) const noexcept {
-    return reinterpret_cast<const uint8_t(&)[2]>(id_)[n];
-  }
-  // constexpr uint8_t upper() const {
-  //   return operator[](0);
-  // }
-  // constexpr uint8_t lower() const {
-  //   return operator[](1);
-  // }
-
  private:
   uint16_t id_;
 };
