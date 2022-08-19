@@ -6,7 +6,7 @@
 
 namespace omuct_can_util {
 
-/// @brief uint8_t* data を T型オブジェクトに変換 (T は trivial型 かつ スタンダードレイアウト型 であること)
+/// @brief uint8_t* data を T型オブジェクトに変換 (T は trivial型 かつ standard-layout型 であること)
 template<class T>
 T parse(const uint8_t* const data) {
   T t;
@@ -84,6 +84,8 @@ struct SpecifyCommand_400 {
   operator enum Type() const noexcept { return type_; }
  private : enum Type type_;
 };
+
+// @note trivial型 かつ standard-layout型
 struct __attribute__((packed)) ServoPulseConfig {
   uint16_t min_pulse_us;
   uint16_t max_pulse_us;

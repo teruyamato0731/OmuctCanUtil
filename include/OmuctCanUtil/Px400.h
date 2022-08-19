@@ -22,7 +22,7 @@ struct Px400 final : PlugBase {
   /// @param manager CanManager
   /// @param individual_id 個体ID
   constexpr Px400(CanManager& manager, const uint16_t individual_id) noexcept
-      : PlugBase{manager, CanId{0x400, individual_id}} {}
+      : PlugBase{manager, CanId<CANExtended>{0x400, individual_id}} {}
 
   /// setupで呼び出し
   void setup(const uint16_t id, const State state, const ServoPulseConfig& config) {
@@ -41,13 +41,13 @@ struct Px400 final : PlugBase {
   }
 
   void set_config(const ServoPulseConfig& config) {
-    manager_.send_data(id_, Command::call_api, SpecifyCommand::set_up, config);
+    manager_.send_data(id_, Command::call_api, SpecifyCommand_400::set_config, config);
   }
 
   // サーボを出力
   void servo_write(const float duty) {
     if(receive_id_) {
-      manager_.send_data(receive_id_.value(), Command::call_api, SpecifyCommand::force_set_state, duty);
+      manager_.send_data(receive_id_.value(), Command::call_api, SpecifyCommand_400::force_write, duty);
     }
   }
 
@@ -57,7 +57,7 @@ struct Px400 final : PlugBase {
 
   // サーボを出力
   void force_write(const float duty) {
-    manager_.send_data(id, {Command::call_api, SpecifyCommand::force_set_state}, duty);
+    manager_.send_data(id_, Command::call_api, SpecifyCommand_400::force_write, duty);
   }
 
  private:
