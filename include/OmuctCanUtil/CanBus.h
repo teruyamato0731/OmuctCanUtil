@@ -28,7 +28,7 @@ struct CanBus {
     }
     return 0;
   }
-  int write(CanMessage& msg) {
+  int write(const CanMessage& msg) {
     if(msg.format == CANStandard) {
       CAN.beginPacket(msg.id, msg.type);
     } else if(msg.format == CANExtended) {

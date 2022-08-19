@@ -8,7 +8,7 @@
 
 namespace omuct_can_util {
 
-template<CANFormat E>
+template<CanFormat E>
 struct CanId;
 
 /// @note standard layout であることを規定
@@ -60,7 +60,7 @@ struct CanId<CANExtended> {
 template<>
 struct CanId<CANStandard> {
   explicit constexpr CanId(const uint16_t id) : id_{id} {}
-  explicit constexpr CanId(const uint8_t* const data) : id_{parse<uint16_t>(data)} {}
+  explicit CanId(const uint8_t* const data) : id_{parse<uint16_t>(data)} {}
   constexpr uint16_t get_id() const noexcept {
     return id_;
   }

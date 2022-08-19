@@ -9,6 +9,7 @@ namespace omuct_can_util {
 
 struct PlugBase {
   constexpr PlugBase(CanManager& manager, const CanId<CANExtended> id) noexcept : manager_{manager}, id_{id} {};
+  virtual ~PlugBase() noexcept = default;
 
   // hard reset
   void hard_reset() {

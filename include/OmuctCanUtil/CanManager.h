@@ -33,13 +33,13 @@ struct CanManager {
     can_.write(msg);
   }
   // CanBusにdataを送信
-  template<CANFormat E, std::size_t N>
+  template<CanFormat E, std::size_t N>
   void send_data(const CanId<E> id, const uint8_t (&data)[N]) {
     CanMessage msg{id.get_id(), data, N, CANData, E};
     send(msg);
   }
   // CanBusにargsを送信
-  template<class... Args>
+  template<CanFormat E, class... Args>
   void send_data(const CanId<E> id, const Args&... args) {
     uint8_t data[(sizeof(Args) + ...)];
     make_data(data, args...);
