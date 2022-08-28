@@ -13,7 +13,7 @@ CanManager can_manager{can};
 
 // servo
 Px400 px400{can_manager, 0x01};
-constexpr ServoPulseConfig config = {(int)1e3, (int)2e3, (int)60e3};
+constexpr ServoPulseConfig config = {(int)0.5e3, (int)2.4e3, (int)20e3};
 
 Timer timer;
 

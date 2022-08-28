@@ -1,11 +1,17 @@
+/// Copyright (c) 2022 Yoshikawa Teru
+/// This software is released under the MIT License, see LICENSE.
 #ifndef OCU_CAN_BUS_H_
 #define OCU_CAN_BUS_H_
+
+#include "CanUtil.h"
 
 #ifdef __MBED__
 
 #include <mbed.h>
 namespace omuct_can_util {
+OCU_BEGIN_NAMESPACE_VERSION
 using CanBus = mbed::CAN;
+OCU_END_NAMESPACE_VERSION
 }  // namespace omuct_can_util
 #elif defined(ARDUINO)  // __MBED__
 
@@ -15,6 +21,7 @@ using CanBus = mbed::CAN;
 #include "CanMessage.h"
 
 namespace omuct_can_util {
+OCU_BEGIN_NAMESPACE_VERSION
 struct CanBus {
   CanBus(const int rx, const int tx, const long hz) {
     CAN.begin(hz);
@@ -42,6 +49,7 @@ struct CanBus {
   //   return 0;
   // }
 };
+OCU_END_NAMESPACE_VERSION
 }  // namespace omuct_can_util
 #else
 #error unsupported framework

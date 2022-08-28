@@ -1,14 +1,22 @@
+/// Copyright (c) 2022 Yoshikawa Teru
+/// This software is released under the MIT License, see LICENSE.
 #ifndef OCU_CAN_MESSAGE_H_
 #define OCU_CAN_MESSAGE_H_
+
+#include "CanUtil.h"
 
 #ifdef __MBED__
 #include <mbed.h>
 namespace omuct_can_util {
+OCU_BEGIN_NAMESPACE_VERSION
 using CanMessage = mbed::CANMessage;
 using CanFormat = CANFormat;
+OCU_END_NAMESPACE_VERSION
 }  // namespace omuct_can_util
 #elif defined(ARDUINO)
 namespace omuct_can_util {
+OCU_BEGIN_NAMESPACE_VERSION
+
 enum CanFormat {
   CANStandard = 0,
   CANExtended = 1,
@@ -40,6 +48,8 @@ struct CanMessage {
   CanFormat format;       // Format ::CanFormat
   CANType type;           // Type ::CANType
 };
+
+OCU_END_NAMESPACE_VERSION
 };  // namespace omuct_can_util
 #else
 #error unsupported framework

@@ -1,9 +1,5 @@
 /// Copyright (c) 2022 Yoshikawa Teru
 /// This software is released under the MIT License, see LICENSE.
-/// ソレノイド基板のプラグイン
-/// @file Px002.h
-/// @author Yoshikawa Teru
-
 #ifndef OCU_PX002_H_
 #define OCU_PX002_H_
 
@@ -16,41 +12,52 @@
 #include "PlugBase.h"
 
 namespace omuct_can_util {
+OCU_BEGIN_NAMESPACE_VERSION
 
+/// @brief ソレノイド基板のプラグイン
 struct Px002 final : PlugBase {
   /// コンストラクタ
-  /// @param manager CanManager
+  /// @param manager CAN通信に使用するCanManager
   /// @param individual_id 個体ID
   constexpr Px002(CanManager& manager, const uint16_t individual_id) noexcept
       : PlugBase{manager, CanId<CANExtended>{0x002, individual_id}} {}
 
-  /// setupで呼び出し
-  void setup(const uint16_t id, const State state) {
-    set_mosi_id(id);
+  /// @brief setupで呼び出し set_receive_idコマンドとset_stateコマンドを送信する
+  /// @param receive_id ソレノイドの値を受け取るid
+  /// @param state セットするstate
+  /// @see set_mosi_id set_state
+  void setup(const uint16_t receive_id, const State state) {
+    set_mosi_id(receive_id);
     set_state(state);
   }
 
-  // master out slave in の id を設定
-  void set_mosi_id(const uint16_t id) {
-    set_mosi_id(CanId<CANStandard>{id});
+  /// @brief set_receive_idコマンドを送信する
+  /// @param receive_id セットする受信ID
+  void set_mosi_id(const uint16_t receive_id) {
+    set_mosi_id(CanId<CANStandard>{receive_id});
   }
+  /// @brief set_receive_idコマンドを送信する
+  /// @param receive_id セットする受信ID
   void set_mosi_id(const CanId<CANStandard> receive_id) {
     receive_id_ = receive_id;
-    manager_.send_data(id_, Command::set_mosi_id, receive_id.get_id());
+    manager_.send_data(unique_id_, Command::set_mosi_id, receive_id.get_id());
   }
 
-  // ソレノイドを出力
+  /// @brief receive_idにソレノイド出力コマンドを送信する
+  /// @param sol_flg 8bitのソレノイド出力状態
   void sol_write(const uint8_t sol_flg) {
     if(receive_id_) {
       sol_flg_ = sol_flg;
-      manager_.send_data(id_, {sol_flg});
+      manager_.send_data(unique_id_, {sol_flg});
     }
   }
 
-  // ソレノイドを出力(stopでも強制的に出力)
+  /// @brief 固有IDにソレノイド出力コマンド(force_sol_write)を送信する
+  /// @note stop状態でも強制的に出力される
+  /// @param sol_flg 8bitのソレノイド出力状態
   void force_sol_write(const uint8_t sol_flg) {
     sol_flg_ = sol_flg;
-    manager_.send_data(id_, {Command::call_api, SpecifyCommand_002::force_sol_write, sol_flg});
+    manager_.send_data(unique_id_, {Command::call_api, SpecifyCommand_002::force_sol_write, sol_flg});
   }
 
  private:
@@ -58,6 +65,7 @@ struct Px002 final : PlugBase {
   uint8_t sol_flg_ = 0;
 };
 
+OCU_END_NAMESPACE_VERSION
 }  // namespace omuct_can_util
 
 #endif  // OCU_P002_H_

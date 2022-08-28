@@ -1,25 +1,46 @@
+/// Copyright (c) 2022 Yoshikawa Teru
+/// This software is released under the MIT License, see LICENSE.
 #ifndef OCU_CAN_UTIL_H_
 #define OCU_CAN_UTIL_H_
 
 #include <cstdint>
 #include <cstring>
 
+#ifndef OCU_NO_INLINE_VERSION
+/// @version 1.0.0
+#define OCU_BEGIN_NAMESPACE_VERSION namespace ocu1_0_0 {
+#define OCU_END_NAMESPACE_VERSION }
 namespace omuct_can_util {
+inline OCU_BEGIN_NAMESPACE_VERSION OCU_END_NAMESPACE_VERSION
+}
+#else
+#define OCU_BEGIN_NAMESPACE_VERSION
+#define OCU_END_NAMESPACE_VERSION
+#endif  // OCU_NO_INLINE_VERSION
 
-/// @brief uint8_t* data を T型オブジェクトに変換 (T は trivial型 かつ standard-layout型 であること)
+namespace omuct_can_util {
+OCU_BEGIN_NAMESPACE_VERSION
+
+/// @brief uint8_t* data を T型オブジェクトに変換
+/// @param data 変換元データ
+/// @tparam T 変換先の型 trivially-copyable型 かつ standard-layout型 であること
+/// @return 変換後データ
 template<class T>
 T parse(const uint8_t* const data) {
-  T t;
-  memcpy(&t, data, sizeof(T));
-  return t;
+  alignas(T) uint8_t t_buff[sizeof(T)];
+  memcpy(t_buff, data, sizeof(T));
+  return *reinterpret_cast<T*>(t_buff);
 }
 
 /// @brief args...を uint8_t* data に変換
+/// @param buf 変換後データを入れるバッファ
+/// @param head,args... 変換元データ
+/// @tparam Head,Args... 変換元の型 trivially-copyable型 かつ standard-layout型 であること
 template<class Head, class... Args>
-void make_data(uint8_t* data, const Head& head, const Args&... args) {
-  memcpy(data, reinterpret_cast<const uint8_t*>(&head), sizeof(Head));
+void make_data(uint8_t* buf, const Head& head, const Args&... args) {
+  memcpy(buf, &head, sizeof(Head));
   if constexpr(sizeof...(Args)) {
-    make_data(data + sizeof(Head), args...);
+    make_data(buf + sizeof(Head), args...);
   }
 }
 
@@ -85,13 +106,19 @@ struct SpecifyCommand_400 {
  private : enum Type type_;
 };
 
-// @note trivial型 かつ standard-layout型
+/// @brief サーボ設定
+/// @note trivial型 かつ standard-layout型
 struct __attribute__((packed)) ServoPulseConfig {
-  uint16_t min_pulse_us;
-  uint16_t max_pulse_us;
-  uint16_t one_cycle_us;
+  uint16_t min_pulse_us;  // 最小パルス幅(マイクロ秒)
+  uint16_t max_pulse_us;  // 最大パルス幅(マイクロ秒)
+  uint16_t one_cycle_us;  // PWM信号の1周期(マイクロ秒)
 };
 
+OCU_END_NAMESPACE_VERSION
 }  // namespace omuct_can_util
+
+#ifndef OCU_NO_GLOBAL_USING_DIRECTIVE
+using namespace omuct_can_util;
+#endif
 
 #endif  // OCU_CAN_UTIL_H_

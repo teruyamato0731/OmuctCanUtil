@@ -1,26 +1,61 @@
+/// Copyright (c) 2022 Yoshikawa Teru
+/// This software is released under the MIT License, see LICENSE.
 #ifndef OCU_CAN_ID_H_
 #define OCU_CAN_ID_H_
 
 #include <cstddef>
 
-#include "OmuctCanUtil/CanMessage.h"
-#include "OmuctCanUtil/CanUtil.h"
+#include "CanMessage.h"
+#include "CanUtil.h"
 
 namespace omuct_can_util {
+OCU_BEGIN_NAMESPACE_VERSION
 
+/// @tparam E 標準フォーマットID or 拡張フォーマットID
 template<CanFormat E>
 struct CanId;
 
-/// @note standard layout であることを規定
+/// @brief 標準フォーマットのCAN ID
+/// @remark リトルエンディアンを使用すること
+/// @remark standard-layout であることを規定
+/// @remark trivially-copyable であることを規定
+template<>
+struct CanId<CANStandard> {
+  /// コンストラクタ
+  explicit constexpr CanId(const uint16_t id) : id_{id} {}
+  explicit CanId(const uint8_t* const data) : id_{parse<uint16_t>(data)} {}
+  /// トリビアルなコピームーブ可
+  constexpr CanId(const CanId&) noexcept = default;
+  constexpr CanId(CanId&&) noexcept = default;
+  constexpr CanId& operator=(const CanId&) noexcept = default;
+  constexpr CanId& operator=(CanId&&) noexcept = default;
+
+  constexpr uint16_t get_id() const noexcept {
+    return id_;
+  }
+ private:
+  uint16_t id_;
+};
+
+/// @brief 拡張フォーマットのCAN ID
+/// @remark standard-layout であることを規定
+/// @remark trivially-copyable であることを規定
 template<>
 struct CanId<CANExtended> {
-  // コンストラクタ
+  /// コンストラクタ
+  /// @param id 固有id
   explicit constexpr CanId(const uint32_t id) noexcept : id_{id} {}
+
+  /// @param api_id API ID
+  /// @param individual_id 個体ID
+  /// @param is_return=false
   constexpr CanId(const uint16_t api_id, const uint16_t individual_id, const bool is_return = false) noexcept
       : id_{((api_id & 0xfffu) << 13) | ((individual_id & 0xfffu) << 1) | is_return} {}
-  // コピームーブ可
-  constexpr CanId(const CanId& can_id) noexcept = default;
-  constexpr CanId(CanId&& can_id) noexcept = default;
+  /// トリビアルなコピームーブ可
+  constexpr CanId(const CanId&) noexcept = default;
+  constexpr CanId(CanId&&) noexcept = default;
+  constexpr CanId& operator=(const CanId&) noexcept = default;
+  constexpr CanId& operator=(CanId&&) noexcept = default;
 
   // getter
   constexpr uint32_t get_id() const noexcept {
@@ -55,19 +90,7 @@ struct CanId<CANExtended> {
   const uint32_t id_;
 };
 
-/// リトルエンディアンを使用すること
-/// @note standard layout であることを規定
-template<>
-struct CanId<CANStandard> {
-  explicit constexpr CanId(const uint16_t id) : id_{id} {}
-  explicit CanId(const uint8_t* const data) : id_{parse<uint16_t>(data)} {}
-  constexpr uint16_t get_id() const noexcept {
-    return id_;
-  }
- private:
-  uint16_t id_;
-};
-
+OCU_END_NAMESPACE_VERSION
 }  // namespace omuct_can_util
 
 #endif  // OCU_CAN_ID_H_

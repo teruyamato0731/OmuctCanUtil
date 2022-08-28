@@ -1,29 +1,49 @@
-#ifndef FARM400_H_
-#define FARM400_H_
+/// Copyright (c) 2022 Yoshikawa Teru
+/// This software is released under the MIT License, see LICENSE.
+#ifndef OCU_FARM400_H_
+#define OCU_FARM400_H_
 
 #include <mbed.h>
 
 #include <array>
 #include <optional>
 
-#include "OmuctCanUtil/CanUtil.h"
-#include "OmuctCanUtil/FirmBase.h"
+#include "CanUtil.h"
+#include "FirmBase.h"
 
+namespace omuct_can_util {
+OCU_BEGIN_NAMESPACE_VERSION
+
+/// @brief サーボ基板のファームウェア ソースはexampleのFirm内
 struct Fx400 final : FirmBase {
+  /// コンストラクタ
+  /// @param can 通信に使用するCanBus
+  /// @param individual_id 個体ID
+  /// @param pins サーボ出力に使用するピン
   Fx400(CAN& can, const uint16_t individual_id, const PinName pin)
       : FirmBase{can, {0x002, individual_id}}, pwm_out{pin} {}
 
+  /// コピームーブ不可
+  Fx002(const Fx002&) = delete;
+  Fx002(Fx002&&) = delete;
+
+  /// @brief 現在のconfigからパルス幅を計算しPWMを出力する
+  /// @param duty 出力するデューティ比 0.0<=duty<=1.0
   void servo_write(const float duty) {
-    if(config) {
-      pwm_out.pulsewidth_us(config->min_us + duty * (config->max_us - config->min_us));
+    if(config_) {
+      pwm_out.pulsewidth_us(config_->min_us + duty * (config_->max_us - config_->min_us));
     }
   }
 
+  /// @brief set_config受信時に実行
+  /// @param config セットするサーボのパルス幅設定
   void set_config(const ServoPulseConfig& config) {
     config_ = config;
     pwm_out.period_us(config.one_cycle_us);
   }
 
+  /// @brief メッセージ受信時の動作 task内で呼び出される
+  /// @param msg 受信したメッセージ
   void on_receive(const CanMessage& msg) override {
     if(msg.format == CANStandard && state_ == State::start && receive_id_ && msg.id == receive_id_->get_id()) {
       servo_write(data);
@@ -51,4 +71,7 @@ struct Fx400 final : FirmBase {
   std::optional<CanId<CANStandard>> receive_id_ = std::nullopt;
 };
 
-#endif  // FARM400_H_
+OCU_END_NAMESPACE_VERSION
+}  // namespace omuct_can_util
+
+#endif  // OCU_FARM400_H_
