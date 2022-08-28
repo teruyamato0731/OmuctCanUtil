@@ -1,6 +1,6 @@
-#include <mbed.h>
 #include <OmuctCanUtil/CanManager.h>
 #include <OmuctCanUtil/Px002.h>
+#include <mbed.h>
 
 using namespace omuct_can_util;
 
@@ -21,14 +21,18 @@ int main() {
     printf("hoge\t%d\n", msg.id);
   });
 
-  can_manager.who_am_i();
   px002.setup(1, State::start);
 
   while(1) {
     can_manager.task();
-    px002.sol_write(0b1010);
-    printf("send\n");
 
-    ThisThread::sleep_for(500ms);
+    auto now = timer.elapsed_time();
+    static auto pre = now;
+    constexpr auto wait = chrono::milliseconds{200};
+    if(now - pre > wait) {
+      can_manager.who_am_i();
+      px002.sol_write(0b1010);
+      printf("send\n");
+    }
   }
 }

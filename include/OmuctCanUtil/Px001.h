@@ -1,25 +1,14 @@
+/// Copyright (c) 2022 Yoshikawa Teru
+/// This software is released under the MIT License, see LICENSE.
 #ifndef OCU_PX001_H_
 #define OCU_PX001_H_
 
-#include "CanId.h"
-#include "CanMessage.h"
-#include "PlugBase.h"
-
 namespace omuct_can_util {
+OCU_BEGIN_NAMESPACE_VERSION
 
-// struct Px001 : PlugBase {
-//   // TODO
-//   constexpr Px001(CanManager) noexcept {}
+struct Px001;
 
-//   void task(CanBus& can, const CanMessage& msg) override {
-//     if(false) {
-//       can.write(msg);
-//     }
-//   }
-
-//   const CanId can_id = {0x001, 0};
-// };
-
+OCU_END_NAMESPACE_VERSION
 }  // namespace omuct_can_util
 
 #endif  // OCU_P001_H_
