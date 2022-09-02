@@ -34,7 +34,7 @@ struct Fx002 final : FirmBase {
   /// @param sol_flg 8bitのソレノイド出力状態
   void sol_write(const uint8_t state) {
     for(uint8_t i = 0; i < 8; ++i) {
-      sols[i] = state & (1 << i);
+      sols_[i] = state & (1 << i);
     }
   }
 
@@ -54,11 +54,11 @@ struct Fx002 final : FirmBase {
   }
 
   void set_mosi_id(const uint8_t (&data)[8]) override {
-    receive_id_ = CanId{&data[1]};
+    receive_id_ = CanId<CANStandard>{&data[1]};
   }
 
  private:
-  std::array<mbed::DigitalWrite, 8> sols_;
+  std::array<mbed::DigitalOut, 8> sols_;
   std::optional<CanId<CANStandard>> receive_id_ = std::nullopt;
 };
 

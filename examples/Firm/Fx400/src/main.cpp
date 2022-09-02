@@ -1,5 +1,5 @@
 #include <OmuctCanUtil/CanManager.h>
-#include <OmuctCanUtil/Firm002.h>
+#include <OmuctCanUtil/Fx400.h>
 #include <mbed.h>
 
 using namespace omuct_can_util;
@@ -9,8 +9,10 @@ using namespace omuct_can_util;
 CAN can{PA_11, PA_12, (int)1e6};
 
 // Firm
-Firm002 farm{can, 1, {D4, D5, D6, D7, D8, D9, D12, D11}};
+std::array<Fx400, 4> farms{Fx400{can, 1, D4}, Fx400{can, 2, D5}, Fx400{can, 3, D6}, Fx400{can, 4, D7}};
 
 int main() {
-  farm.task();
+  for(auto& farm: farms) {
+    farm.task();
+  }
 }
