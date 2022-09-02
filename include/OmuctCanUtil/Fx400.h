@@ -24,14 +24,14 @@ struct Fx400 final : FirmBase {
       : FirmBase{can, {0x002, individual_id}}, pwm_out{pin} {}
 
   /// コピームーブ不可
-  Fx002(const Fx002&) = delete;
-  Fx002(Fx002&&) = delete;
+  Fx400(const Fx400&) = delete;
+  Fx400(Fx400&&) = delete;
 
   /// @brief 現在のconfigからパルス幅を計算しPWMを出力する
   /// @param duty 出力するデューティ比 0.0<=duty<=1.0
   void servo_write(const float duty) {
     if(config_) {
-      pwm_out.pulsewidth_us(config_->min_us + duty * (config_->max_us - config_->min_us));
+      pwm_out.pulsewidth_us(config_->min_pulse_us + duty * (config_->max_pulse_us - config_->min_pulse_us));
     }
   }
 
@@ -46,23 +46,23 @@ struct Fx400 final : FirmBase {
   /// @param msg 受信したメッセージ
   void on_receive(const CanMessage& msg) override {
     if(msg.format == CANStandard && state_ == State::start && receive_id_ && msg.id == receive_id_->get_id()) {
-      servo_write(data);
+      servo_write(parse<float>(msg.data));
     }
   }
 
   void call_api(const uint8_t (&data)[8]) override {
     switch(data[1]) {
-      case SpecifyCommand_002::force_sol_write:
+      case SpecifyCommand_400::force_write:
         servo_write(parse<float>(&data[2]));
         break;
-      case SpecifyCommand_002::set_config:
+      case SpecifyCommand_400::set_config:
         set_config(parse<ServoPulseConfig>(&data[2]));
         break;
     }
   }
 
   void set_mosi_id(const uint8_t (&data)[8]) override {
-    receive_id_ = CanId{&data[1]};
+    receive_id_ = CanId<CANStandard>{&data[1]};
   }
 
  private:
